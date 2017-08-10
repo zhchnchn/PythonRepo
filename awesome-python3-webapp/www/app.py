@@ -19,8 +19,8 @@ logging.basicConfig(level=logging.DEBUG,
                 filemode='w')
 
 def index(request):
-    # return web.Response(body=b'<html><head><title>myapp</title></head><body><h1>Awesome</h1></body></html>')
-    return web.Response(body=b'<h1>Awesome</h1>')
+    return web.Response(body=b'<html><head><title>myapp</title></head><body><h1>Awesome</h1></body></html>', content_type='text/html')
+    # return web.Response(body=b'<h1>Awesome</h1>', content_type='text/html')
 
 async def init(loop):
     app = web.Application(loop=loop)

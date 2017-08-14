@@ -4,10 +4,12 @@
 import os
 import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, abort, \
-    render_template, flash
+    render_template, flash, send_from_directory
+
 
 app = Flask(__name__) # create the application instance :)
 app.config.from_object(__name__) # load config from this file , flaskr.py
+
 
 # Load default config and override config from an environment variable
 app.config.update(dict(
@@ -18,11 +20,13 @@ app.config.update(dict(
 ))
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 
+
 def connect_db():
     """Connects to the specific database."""
     rv = sqlite3.connect(app.config['DATABASE'])
     rv.row_factory = sqlite3.Row
     return rv
+
 
 def get_db():
     """Opens a new database connection if there is none yet for the
@@ -31,6 +35,7 @@ def get_db():
     if not hasattr(g, 'sqlite_db'):
         g.sqlite_db = connect_db()
     return g.sqlite_db
+
 
 @app.teardown_appcontext
 def close_db(error):
@@ -44,11 +49,13 @@ def init_db():
         db.cursor().executescript(f.read())
     db.commit()
 
+
 @app.cli.command('initdb')
 def initdb_command():
     """Initializes the database."""
     init_db()
     print('Initialized the database.')
+
 
 @app.route('/')
 def show_entries():
@@ -56,6 +63,7 @@ def show_entries():
     cur = db.execute('select title, text from entries order by id desc')
     entries = cur.fetchall()
     return render_template('show_entries.html', entries=entries)
+
 
 @app.route('/add', methods=['POST'])
 def add_entry():
@@ -67,6 +75,7 @@ def add_entry():
     db.commit()
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -82,9 +91,15 @@ def login():
             return redirect(url_for('show_entries'))
     return render_template('login.html', error=error)
 
+
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
     return redirect(url_for('show_entries'))
+
+
+#@app.route('/favicon.ico')
+#def favicon():
+#    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 

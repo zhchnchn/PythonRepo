@@ -8,4 +8,5 @@ export FLASK_APP=flaskr
 # 决不能让调试模式在生产系统中启动，因为它将允许用户在服务器上执行代码！
 export FLASK_DEBUG=true
 # 使用flask提供的run命令启动服务器
-flask run
+flask run --host='0.0.0.0'
+
